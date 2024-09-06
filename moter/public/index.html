@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Control Servo Motor on Arduino</title>
+  <link rel="stylesheet" href="./stylesheets/style.css">
+  <script src="javascripts/jquery-1.12.4.min.js"></script>
+  <script src="javascripts/annyang.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      if (annyang) {
+        var commands = {
+          '서보 모터 0도': function() {
+            $.get('/set/0', function(data) {
+              $('#response').text(data);
+            });
+          },
+          '서보 모터 45도': function() {
+            $.get('/set/45', function(data) {
+              $('#response').text(data);
+            });
+          },
+          '서보 모터 90도': function() {
+            $.get('/set/90', function(data) {
+              $('#response').text(data);
+            });
+          },
+          '서보 모터 135도': function() {
+            $.get('/set/135', function(data) {
+              $('#response').text(data);
+            });
+          },
+          '서보 모터 180도': function() {
+            $.get('/set/180', function(data) {
+              $('#response').text(data);
+            });
+          }
+        };
+        annyang.addCommands(commands);
+        annyang.setLanguage('ko');
+        annyang.start({ autoRestart: true, continuous: false });
+      }
+    });
+  </script>
+</head>
+<body>
+  <table border="0">
+    <tr>
+      <td colspan="4"><h2>서보 모터 제어</h2></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+        <a href="#" onclick="$.get('/set/0', function(data) { $('#response').text(data); }); return false;">서보 모터 0도</a>
+      </td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+        <a href="#" onclick="$.get('/set/45', function(data) { $('#response').text(data); }); return false;">서보 모터 45도</a>
+      </td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+        <a href="#" onclick="$.get('/set/90', function(data) { $('#response').text(data); }); return false;">서보 모터 90도</a>
+      </td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+        <a href="#" onclick="$.get('/set/135', function(data) { $('#response').text(data); }); return false;">서보 모터 135도</a>
+      </td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+        <a href="#" onclick="$.get('/set/180', function(data) { $('#response').text(data); }); return false;">서보 모터 180도</a>
+      </td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+
+  <table border="0">
+    <tr>
+      <td>상태 메시지: <br>&nbsp;<br>&nbsp;</td>
+      <td>
+        <div id="response" style="width: 200px; height: 35px; border: 1px solid #ddd;"></div>
+      </td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</body>
+</html>

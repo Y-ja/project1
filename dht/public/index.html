@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #title {
+            font-weight: bold;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #007BFF;
+        }
+        #imgLed {
+            width: 50px;
+            height: auto;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007BFF;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        #canvas {
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+        #led, #temp, #humi, #adc {
+            font-weight: bold;
+            color: #333;
+        }
+        iframe {
+            display: none;
+        }
+    </style>
+    <title>Communicate with Arduino</title>
+</head>
+
+<body>
+    <div class="container">
+        <div id="title">Communicate with Arduino</div>
+        <table>
+            <tr>
+                <td rowspan="4" width="70">
+                    <img id="imgLed" src="images/off.gif" alt="LED Status">
+                </td>
+                <td>
+                    <a id="ledOn" href="/led_on" target="iframe">Turn On LED</a>
+                    <a id="ledOff" href="/led_off" target="iframe">Turn Off LED</a>
+                </td>
+            </tr>
+            <tr>
+                <td>LED State: <span id="led">N/A</span></td>
+            </tr>
+            <tr>
+                <td>Temperature: <span id="temp">N/A</span></td>
+            </tr>
+            <tr>
+                <td>Humidity: <span id="humi">N/A</span></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <canvas id="canvas" width="160" height="20"></canvas>
+                </td>
+            </tr>
+            <tr>
+                <td>ADC Value: <span id="adc">N/A</span></td>
+            </tr>
+        </table>
+    </div>
+    
+    <iframe src="about:blank" width="0" height="0" frameborder="0" border="0" marginwidth="0" marginheight="0" name="iframe"></iframe>
+    
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            var val = 0;
+            var oldval = 0;
+
+            var socket = io();
+
+            socket.on('led', function(ledStatus) {
+                $('#led').text(ledStatus);
+                if (ledStatus === 'on') {
+                    $('#imgLed').attr('src', "images/on.gif");
+                } else {
+                    $('#imgLed').attr('src', "images/off.gif");
+                }
+            });
+
+            socket.on('adc', function(adcValue) {
+                $('#adc').text(adcValue);
+                
+                oldval = val;
+                val = parseInt(adcValue) / 6;
+                
+                var canvas = document.getElementById('canvas');
+                if (canvas.getContext) {
+                    var ctx = canvas.getContext('2d');
+                    if (val !== oldval) {
+                        ctx.fillStyle = 'rgb(0, 200, 0)';
+                        ctx.fillRect(0, 0, val, 20);
+                        ctx.fillStyle = 'rgb(255, 255, 255)';
+                        ctx.fillRect(val, 0, 1024 / 6, 20);
+                    }
+                }
+            });
+
+            // Temperature data handler
+            socket.on('temp', function(tempValue) {
+                $('#temp').text(tempValue);
+            });
+
+            // Humidity data handler
+            socket.on('humi', function(humiValue) {
+                $('#humi').text(humiValue);
+            });
+        });
+    </script>
+</body>
+
+</html>
